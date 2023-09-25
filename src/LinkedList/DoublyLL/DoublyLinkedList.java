@@ -1,3 +1,6 @@
+package LinkedList.DoublyLL;
+import LinkedList.DoublyLL.DoublyLinkedList;
+
 public class DoublyLinkedList {
   DoublyNode head;
   DoublyNode tail;

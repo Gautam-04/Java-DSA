@@ -1,3 +1,5 @@
+package LinkedList.CircularSLL;
+
 public class CircularSinglyLinkedList {
   public Node head;
   public Node tail;
