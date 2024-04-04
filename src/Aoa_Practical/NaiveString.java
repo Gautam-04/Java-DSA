@@ -7,19 +7,6 @@ public class NaiveString {
         search(x,pattern);
     }
 
-//    static void search(String x,String pattern) {
-//        int n = x.length();
-//        int m = pattern.length();
-//        int i = 0;
-//
-//        for(i = 0; i <= n-m;i++) {
-//            String sub = x.substring(i, i + m);
-//            if (sub.equals(pattern)) {
-//                System.out.println("Pattern matched at index: " + i);
-//            }
-//        }
-//    }
-
     static void search(String x,String pattern){
         int n = x.length();
         int m = pattern.length();
