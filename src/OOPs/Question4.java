@@ -8,19 +8,25 @@ public class Question4 {
 
     public static void main(String[] args) {
         Scanner in = new Scanner(System.in);
-        Rec rec  = new Rec();
+
 
         float len = in.nextFloat();
         float breadth = in.nextFloat();
-
-        float area = rec.Area(len,breadth);
+        Rec rec  = new Rec(len,breadth);
+        double area = rec.Area();
         System.out.println(area);
     }
 
 }
 
 class Rec{
-    public float Area(float l, float b){
-        return l * b;
+    double len;
+    double breadth;
+    public Rec(double len,double breadth){
+        this.len = len;
+        this.breadth=breadth;
+    }
+    public double Area(){
+        return (len * breadth);
     }
 }
