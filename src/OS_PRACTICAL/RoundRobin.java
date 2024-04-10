@@ -18,7 +18,7 @@ public class RoundRobin {
 
         System.out.print("Enter the number of processes: ");
         int n = scanner.nextInt();
-        Process[] processes = new Process[n];
+        Process[] Processes = new Process[n];
 
         System.out.print("Enter time quantum: ");
         int timeQuantum = scanner.nextInt();
@@ -28,29 +28,29 @@ public class RoundRobin {
             System.out.print("Process " + (i + 1) + ": ");
             int arrivalTime = scanner.nextInt();
             int burstTime = scanner.nextInt();
-            processes[i] = new Process(i + 1, arrivalTime, burstTime);
+            Processes[i] = new Process(i + 1, arrivalTime, burstTime);
         }
 
-        roundRobin(processes, timeQuantum);
+        roundRobin(Processes, timeQuantum);
 
         scanner.close();
     }
-    public static void roundRobin(Process[] processes, int timeQuantum) {
-        int n = processes.length;
+    public static void roundRobin(Process[] Processes, int timeQuantum) {
+        int n = Processes.length;
         int currentTime = 0, completedProcesses = 0, totalWaitingTime = 0, totalTurnaroundTime = 0;
 
         System.out.println("Process\tAT\tBT\tCT\tTAT\tWT");
         while (completedProcesses < n) {
-            for (Process process : processes) {
-                if (process.remainingTime > 0) {
-                    int slice = Math.min(process.remainingTime, timeQuantum);
+            for (Process Process : Processes) {
+                if (Process.remainingTime > 0) {
+                    int slice = Math.min(Process.remainingTime, timeQuantum);
                     currentTime += slice;
-                    process.remainingTime -= slice;
+                    Process.remainingTime -= slice;
 
-                    if (process.remainingTime == 0) {
-                        process.completionTime = currentTime;
-                        int turnaroundTime = currentTime - process.arrivalTime;
-                        int waitingTime = turnaroundTime - process.burstTime;
+                    if (Process.remainingTime == 0) {
+                        Process.completionTime = currentTime;
+                        int turnaroundTime = currentTime - Process.arrivalTime;
+                        int waitingTime = turnaroundTime - Process.burstTime;
                         totalWaitingTime += waitingTime;
                         totalTurnaroundTime += turnaroundTime;
                         completedProcesses++;
@@ -60,13 +60,13 @@ public class RoundRobin {
 
             }
         }
-        Arrays.sort(processes, Comparator.comparingInt(p -> p.id));
+        Arrays.sort(Processes, Comparator.comparingInt(p -> p.id));
 
-        for (Process process : processes) {
-            int turnaroundTime = process.completionTime - process.arrivalTime;
-            int waitingTime = turnaroundTime - process.burstTime;
-            System.out.println(process.id + "\t" + process.arrivalTime + "\t"
-                    + process.burstTime + "\t" + process.completionTime + "\t"
+        for (Process Process : Processes) {
+            int turnaroundTime = Process.completionTime - Process.arrivalTime;
+            int waitingTime = turnaroundTime - Process.burstTime;
+            System.out.println(Process.id + "\t" + Process.arrivalTime + "\t"
+                    + Process.burstTime + "\t" + Process.completionTime + "\t"
                     + turnaroundTime + "\t" + waitingTime);
         }
         System.out.println("Average Waiting Time: " + (float) totalWaitingTime / n);
