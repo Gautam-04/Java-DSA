@@ -21,22 +21,15 @@ class NPPSProcess {
 
 public class nonPreemptivePriorityScheduling {
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
+        NPPSProcess[] NPPSProcesses = {
+                new NPPSProcess(1, 3, 10),
+                new NPPSProcess(2, 1, 1),
+                new NPPSProcess(3, 3, 2),
+                new NPPSProcess(4, 1, 1),
+                new NPPSProcess(5, 2, 5),
+        };
 
-        System.out.print("Enter the number of processes: ");
-        int numNPPSProcesses = scanner.nextInt();
-        List<NPPSProcess> NPPSProcesses = new ArrayList<>();
-
-        for (int i = 0; i < numNPPSProcesses; i++) {
-            System.out.println("Enter details for process " + (i + 1) + ":");
-            System.out.print("Priority: ");
-            int priority = scanner.nextInt();
-            System.out.print("Burst Time: ");
-            int burstTime = scanner.nextInt();
-            NPPSProcesses.add(new NPPSProcess((i+1), priority, burstTime));
-        }
-
-        Collections.sort(NPPSProcesses, Comparator.comparingInt(p -> p.priority));
+        Arrays.sort(NPPSProcesses, Comparator.comparingInt(r -> r.priority));
 
         int currentTime = 0;
         int totalWaitingTime = 0;
@@ -52,13 +45,12 @@ public class nonPreemptivePriorityScheduling {
             currentTime += NPPSProcess.burstTime;
         }
 
-        double averageWaitingTime = (double) totalWaitingTime / NPPSProcesses.size();
-        double averageTurnaroundTime = (double) totalTurnaroundTime / NPPSProcesses.size();
+        double averageWaitingTime = (double) totalWaitingTime / NPPSProcesses.length;
+        double averageTurnaroundTime = (double) totalTurnaroundTime / NPPSProcesses.length;
 
         System.out.println("\nAverage Waiting Time: " + averageWaitingTime);
         System.out.println("Average Turnaround Time: " + averageTurnaroundTime);
 
-        scanner.close();
     }
 
 }

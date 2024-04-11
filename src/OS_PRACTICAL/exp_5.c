@@ -4,20 +4,24 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
-int main(void) {
+int main(void)
+{
   pid_t pid = fork();
 
-  if(pid == 0) {
+  if (pid == 0)
+  {
     printf("Child => PPID: %d PID: %d\n", getppid(), getpid());
     exit(EXIT_SUCCESS);
   }
-  else if(pid > 0) {
+  else if (pid > 0)
+  {
     printf("Parent => PID: %d\n", getpid());
     printf("Waiting for child process to finish.\n");
     wait(NULL);
     printf("Child process finished.\n");
   }
-  else {
+  else
+  {
     printf("Unable to create child process.\n");
   }
 

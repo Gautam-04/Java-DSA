@@ -1,94 +1,80 @@
 package OS_PRACTICAL;
-import java.util.Scanner;
+import java.util.*;
 class SJFPreProcess {
     int id;
-    int arrivalTime;
-    int burstTime;
+    int at;
+    int bt;
     int startTime;
-    int completionTime;
-    int waitingTime;
-    int turnaroundTime;
+    int ct;
+    int tat;
+    int remainingTime;
+
+    public SJFPreProcess(int id, int at, int bt) {
+        this.id = id;
+        this.at = at;
+        this.bt = bt;
+        this.remainingTime = bt;
+    }
 }
 
 public class SJFPreemptive {
-    public static void displayHeader() {
-        System.out.println("\nProcess\tArrival Time\tBurst Time\tStart Time\tCompletion Time\tWaiting Time\tTurnaround Time");
-    }
-
-    public static void displayProcess(SJFPreProcess p) {
-        System.out.println(p.id + "\t\t" + p.arrivalTime + "\t\t\t" + p.burstTime + "\t\t\t" +
-                p.startTime + "\t\t\t" + p.completionTime + "\t\t\t" + p.waitingTime + "\t\t\t" + p.turnaroundTime);
-    }
-
-    public static void calculateAverages(SJFPreProcess[] SJFPreProcesses, double[] averages) {
-        int totalWaitingTime = 0;
-        int totalTurnaroundTime = 0;
-        for (SJFPreProcess p : SJFPreProcesses) {
-            totalWaitingTime += p.waitingTime;
-            totalTurnaroundTime += p.turnaroundTime;
-        }
-        averages[0] = (double) totalWaitingTime / SJFPreProcesses.length;
-        averages[1] = (double) totalTurnaroundTime / SJFPreProcesses.length;
-    }
 
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
+        SJFPreProcess[] ps = {
+                new SJFPreProcess(1, 0, 10),
+                new SJFPreProcess(2, 0, 1),
+                new SJFPreProcess(3, 0, 2),
+                new SJFPreProcess(4, 0, 1),
+                new SJFPreProcess(5, 0, 5),
+        };
+        int n = ps.length;
 
-        System.out.print("Enter the number of processes: ");
-        int n = scanner.nextInt();
+        double totalWaitingTime = 0, totalTAT = 0;
 
-        SJFPreProcess[] SJFPreProcesses = new SJFPreProcess[n];
+        System.out.println("\nProcess\tAT\tBT\tCT\tTAT\tWT");
 
-        System.out.println("Enter arrival time and burst time for each process:");
-        for (int i = 0; i < n; i++) {
-            System.out.print("Process " + (i + 1) + ": ");
-            SJFPreProcesses[i] = new SJFPreProcess();
-            SJFPreProcesses[i].id = i + 1;
-            SJFPreProcesses[i].arrivalTime = scanner.nextInt();
-            SJFPreProcesses[i].burstTime = scanner.nextInt();
-        }
+        Arrays.sort(ps, Comparator.comparingInt(p -> p.at));
 
-        int completed = 0;
         int currentTime = 0;
+        int completedProcesses = 0;
 
-        while (completed < n) {
+        while (completedProcesses < n) {
+            int shortestRemainingTime = Integer.MAX_VALUE;
             int shortestIndex = -1;
-            int shortestBurst = Integer.MAX_VALUE;
 
             for (int i = 0; i < n; i++) {
-                if (SJFPreProcesses[i].arrivalTime <= currentTime && SJFPreProcesses[i].burstTime < shortestBurst && SJFPreProcesses[i].burstTime > 0) {
-                    shortestIndex = i;
-                    shortestBurst = SJFPreProcesses[i].burstTime;
+                if (ps[i].at <= currentTime && ps[i].remainingTime > 0) {
+                    if (ps[i].remainingTime < shortestRemainingTime) {
+                        shortestRemainingTime = ps[i].remainingTime;
+                        shortestIndex = i;
+                    }
                 }
             }
 
-            if (shortestIndex == -1) {
+            if (shortestIndex != -1) {
+                SJFPreProcess currentProcess = ps[shortestIndex];
+                currentProcess.startTime = currentTime;
+                currentTime += 1;
+                currentProcess.remainingTime -= 1;
+                if (currentProcess.remainingTime == 0) {
+                    currentProcess.ct = currentTime;
+                    currentProcess.tat = currentProcess.ct - currentProcess.at;
+                    totalWaitingTime += currentProcess.tat - currentProcess.bt;
+                    totalTAT += currentProcess.tat;
+                    completedProcesses++;
+                }
+            } else {
                 currentTime++;
-                continue;
-            }
-
-            SJFPreProcess p = SJFPreProcesses[shortestIndex];
-            p.startTime = currentTime;
-            p.burstTime--;
-            currentTime++;
-            if (p.burstTime == 0) {
-                p.completionTime = currentTime;
-                p.waitingTime = p.startTime - p.arrivalTime;
-                p.turnaroundTime = p.completionTime - p.arrivalTime;
-                completed++;
             }
         }
 
-        double[] averages = new double[2];
-        displayHeader();
-        for (SJFPreProcess p : SJFPreProcesses) {
-            displayProcess(p);
+        Arrays.sort(ps, Comparator.comparingInt(p -> p.id));
+        for (SJFPreProcess p : ps) {
+            System.out.println(p.id + "\t" + p.at + "\t" + p.bt + "\t" + p.ct + "\t" + p.tat + "\t" + (p.tat - p.bt));
         }
-        calculateAverages(SJFPreProcesses, averages);
-        System.out.println("\nAverage Waiting Time: " + averages[0]);
-        System.out.println("Average Turnaround Time: " + averages[1]);
 
-        scanner.close();
+        System.out.println("Average Waiting Time: " + (totalWaitingTime / n));
+        System.out.println("Average Turnaround Time: " + (totalTAT / n));
     }
 
 }

@@ -14,63 +14,50 @@ class Process {
 }
 public class RoundRobin {
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
+        Process[] ps = {
+                new Process(1, 0, 10),
+                new Process(2, 0, 1),
+                new Process(3, 0, 2),
+                new Process(4, 0, 1),
+                new Process(5, 0, 5),
+        };
+        int n = ps.length;
+        int timeQuantam = 1;
+        System.out.print("The Time quantum required is: " + timeQuantam);
 
-        System.out.print("Enter the number of processes: ");
-        int n = scanner.nextInt();
-        Process[] Processes = new Process[n];
+        double totalWaitingTime = 0, totalTAT = 0;
+        int completedProcess = 0,current = 0;
 
-        System.out.print("Enter time quantum: ");
-        int timeQuantum = scanner.nextInt();
+        System.out.println("\nProcess\tAT\tBT\tCT\tTAT\tWT");
+        while(completedProcess<n){
+            for(Process p : ps){
+                if(p.remainingTime > 0){
+                    int slice = Math.min(p.remainingTime,timeQuantam);
+                    current += slice;
+                    p.remainingTime -= slice;
 
-        System.out.println("Enter arrival time and burst time for each process:");
-        for (int i = 0; i < n; i++) {
-            System.out.print("Process " + (i + 1) + ": ");
-            int arrivalTime = scanner.nextInt();
-            int burstTime = scanner.nextInt();
-            Processes[i] = new Process(i + 1, arrivalTime, burstTime);
-        }
-
-        roundRobin(Processes, timeQuantum);
-
-        scanner.close();
-    }
-    public static void roundRobin(Process[] Processes, int timeQuantum) {
-        int n = Processes.length;
-        int currentTime = 0, completedProcesses = 0, totalWaitingTime = 0, totalTurnaroundTime = 0;
-
-        System.out.println("Process\tAT\tBT\tCT\tTAT\tWT");
-        while (completedProcesses < n) {
-            for (Process Process : Processes) {
-                if (Process.remainingTime > 0) {
-                    int slice = Math.min(Process.remainingTime, timeQuantum);
-                    currentTime += slice;
-                    Process.remainingTime -= slice;
-
-                    if (Process.remainingTime == 0) {
-                        Process.completionTime = currentTime;
-                        int turnaroundTime = currentTime - Process.arrivalTime;
-                        int waitingTime = turnaroundTime - Process.burstTime;
-                        totalWaitingTime += waitingTime;
-                        totalTurnaroundTime += turnaroundTime;
-                        completedProcesses++;
-
+                    if(p.remainingTime == 0){
+                        p.completionTime = current;
+                        int tat = current - p.arrivalTime;
+                        int wt = tat - p.burstTime;
+                        totalTAT += tat;
+                        totalWaitingTime += wt;
+                        completedProcess++;
                     }
                 }
-
             }
         }
-        Arrays.sort(Processes, Comparator.comparingInt(p -> p.id));
 
-        for (Process Process : Processes) {
-            int turnaroundTime = Process.completionTime - Process.arrivalTime;
-            int waitingTime = turnaroundTime - Process.burstTime;
-            System.out.println(Process.id + "\t" + Process.arrivalTime + "\t"
-                    + Process.burstTime + "\t" + Process.completionTime + "\t"
+        for (Process p : ps) {
+            int turnaroundTime = p.completionTime - p.arrivalTime;
+            int waitingTime = turnaroundTime - p.burstTime;
+            System.out.println(p.id + "\t" + p.arrivalTime + "\t"
+                    + p.burstTime + "\t" + p.completionTime + "\t"
                     + turnaroundTime + "\t" + waitingTime);
         }
-        System.out.println("Average Waiting Time: " + (float) totalWaitingTime / n);
-        System.out.println("Average Turnaround Time: " + (float) totalTurnaroundTime / n);
 
+        System.out.println("Average Waiting Time: " + (totalWaitingTime / ps.length));
+        System.out.println("Average Turnaround Time: " + (totalTAT / ps.length));
     }
+
 }
